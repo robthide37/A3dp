@@ -1,0 +1,139 @@
+[server]
+host = 0.0.0.0
+port = 7125
+klippy_uds_address = /home/pi/printer_data/comms/klippy.sock
+
+[authorization]
+trusted_clients = 
+	192.168.0.0/16
+	10.0.0.0/8
+	127.0.0.0/8
+	169.254.0.0/16
+	172.16.0.0/12
+	192.168.0.0/16
+	FE80::/10
+	::1/128
+cors_domains = 
+	*.lan
+	*.local
+	*://localhost
+	*://localhost:*
+	*://my.mainsail.xyz
+	*://app.fluidd.xyz
+
+[octoprint_compat]
+
+[history]
+
+[update_manager]
+channel = dev
+refresh_interval = 168
+
+[update_manager mainsail]
+type = web
+channel = stable
+repo = mainsail-crew/mainsail
+path = /home/pi/mainsail
+
+[update_manager mainsail-config]
+type = git_repo
+primary_branch = master
+path = /home/pi/mainsail-config
+origin = https://github.com/mainsail-crew/mainsail-config.git
+managed_services = klipper
+
+[update_manager crowsnest]
+type = git_repo
+path = ~/crowsnest
+origin = https://github.com/mainsail-crew/crowsnest.git
+managed_services = crowsnest
+install_script = tools/pkglist.sh
+
+[update_manager mcu_flasher]
+type = git_repo
+path = ~/moonraker-mcu-flasher
+origin = https://github.com/juliapythoncpp/moonraker-mcu-flasher.git
+is_system_service = False
+managed_services = klipper moonraker
+
+[update_manager Klippain-ShakeTune]
+type = git_repo
+origin = https://github.com/Frix-x/klippain-shaketune.git
+path = ~/klippain_shaketune
+virtualenv = ~/klippy-env
+requirements = requirements.txt
+system_dependencies = system-dependencies.json
+primary_branch = main
+managed_services = klipper
+
+[mcu_flasher linux]
+kconfig = 
+	CONFIG_LOW_LEVEL_OPTIONS=y
+	CONFIG_MACH_LINUX=y
+flash_cmd = 
+	make flash
+
+[mcu_flasher a3dpmain]
+kconfig = 
+	CONFIG_LOW_LEVEL_OPTIONS=y
+	CONFIG_MACH_STM32=y
+	CONFIG_BOARD_DIRECTORY="stm32"
+	CONFIG_MCU="stm32f446xx"
+	CONFIG_CLOCK_FREQ=180000000
+	CONFIG_FLASH_SIZE=0x80000
+	CONFIG_FLASH_BOOT_ADDRESS=0x8000000
+	CONFIG_RAM_START=0x20000000
+	CONFIG_RAM_SIZE=0x20000
+	CONFIG_STACK_SIZE=512
+	CONFIG_FLASH_APPLICATION_ADDRESS=0x8008000
+	CONFIG_STM32_SELECT=y
+	CONFIG_MACH_STM32F446=y
+	CONFIG_MACH_STM32F4=y
+	CONFIG_HAVE_STM32_USBOTG=y
+	CONFIG_HAVE_STM32_CANBUS=y
+	CONFIG_HAVE_STM32_USBCANBUS=y
+	CONFIG_STM32_DFU_ROM_ADDRESS=0x1fff0000
+	CONFIG_STM32_FLASH_START_8000=y
+	CONFIG_STM32_CLOCK_REF_12M=y
+	CONFIG_CLOCK_REF_FREQ=12000000
+	CONFIG_STM32F0_TRIM=16
+	CONFIG_STM32_USBCANBUS_PA11_PA12=y
+	CONFIG_STM32_CMENU_CANBUS_PD0_PD1=y
+	CONFIG_STM32_CANBUS_PD0_PD1=y
+	CONFIG_USBCANBUS=y
+	CONFIG_USB=y
+	CONFIG_USB_SERIAL_NUMBER_CHIPID=n
+	CONFIG_USB_SERIAL_NUMBER="a3dpmain"
+	CONFIG_CAN_UUID_USE_CHIPID=n
+	CONFIG_CAN_UUID_CUSTOM="a3dp"
+	CONFIG_WANT_GPIO_BITBANGING=y
+	CONFIG_WANT_DISPLAYS=y
+	CONFIG_WANT_SENSORS=y
+	CONFIG_WANT_LIS2DW=y
+	CONFIG_WANT_LDC1612=y
+	CONFIG_WANT_HX71X=y
+	CONFIG_WANT_ADS1220=y
+	CONFIG_WANT_SOFTWARE_I2C=y
+	CONFIG_WANT_SOFTWARE_SPI=y
+	CONFIG_NEED_SENSOR_BULK=y
+	CONFIG_CANBUS=y
+	CONFIG_CANBUS_FREQUENCY=1000000
+	CONFIG_INITIAL_PINS=""
+	CONFIG_HIGH_PREC_STEP=y
+	CONFIG_HAVE_GPIO=y
+	CONFIG_HAVE_GPIO_ADC=y
+	CONFIG_HAVE_GPIO_SPI=y
+	CONFIG_HAVE_GPIO_SDIO=y
+	CONFIG_HAVE_GPIO_I2C=y
+	CONFIG_HAVE_GPIO_HARD_PWM=y
+	CONFIG_HAVE_STRICT_TIMING=y
+	CONFIG_HAVE_CHIPID=y
+	CONFIG_HAVE_STEPPER_BOTH_EDGE=y
+	CONFIG_HAVE_BOOTLOADER_REQUEST=y
+	CONFIG_INLINE_STEPPER_HACK=y
+flash_cmd = 
+	python3 ~/katapult/scripts/flashtool.py -u c26ac2b5cdd2 -r
+	sleep 1
+	python3 ~/katapult/scripts/flashtool.py -f ~/klipper/out/klipper.bin -d /dev/serial/by-id/usb-katapult_stm32f446xx_a3dpmain-if00
+silent = True
+

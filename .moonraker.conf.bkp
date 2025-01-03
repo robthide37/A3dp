@@ -23,6 +23,8 @@ cors_domains =
 
 [octoprint_compat]
 
+[timelapse]
+
 [history]
 
 [update_manager]
@@ -65,6 +67,13 @@ requirements = requirements.txt
 system_dependencies = system-dependencies.json
 primary_branch = main
 managed_services = klipper
+
+[update_manager timelapse]
+type = git_repo
+primary_branch = main
+path = ~/moonraker-timelapse
+origin = https://github.com/mainsail-crew/moonraker-timelapse.git
+managed_services = klipper moonraker
 
 [mcu_flasher linux]
 kconfig = 
